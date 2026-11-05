@@ -1,6 +1,120 @@
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, PieChart, Pie, Cell } from 'recharts'
-import { useApp } from '../context/AppContext'
-import { money, monthlyTotals, totals } from '../utils/finance'
-export default function Reports(){const {transactions,categoryById,preferences,t}=useApp();const chart=monthlyTotals(transactions);const expenseByCategory=Object.entries(transactions.filter(t=>t.type==='expense').reduce((a,t)=>{const c=categoryById[t.categoryId]?.name||'Other';a[c]=(a[c]||0)+Number(t.amount);return a},{})).map(([name,value],i)=>({name,value,color:['#0f766e','#14b8a6','#f59e0b','#3b82f6','#8b5cf6','#ef4444'][i%6]}));const sum=totals(transactions)
- return <div><div className="page-heading"><div><p>{t('financialInsights')}</p><h1>{t('reports')}</h1></div></div><div className="summary-grid small"><div className="summary-card"><div className="summary-icon income"><span>＋</span></div><div><p>{t('netCashFlow')}</p><h2>{money(sum.income-sum.expense,preferences.currency)}</h2></div></div><div className="summary-card"><div className="summary-icon expense"><span>−</span></div><div><p>{t('expenseRatio')}</p><h2>{sum.income?Math.round(sum.expense/sum.income*100):0}%</h2></div></div></div><div className="charts-grid"><section className="panel wide"><div className="panel-head"><div><p>{t('trend')}</p><h3>{t('monthlyComparison')}</h3></div></div><div className="chart"><ResponsiveContainer width="100%" height="100%"><BarChart data={chart}><CartesianGrid strokeDasharray="3 3" vertical={false}/><XAxis dataKey="month" axisLine={false} tickLine={false}/><YAxis axisLine={false} tickLine={false}/><Tooltip formatter={(v)=>money(v,preferences.currency)}/><Bar dataKey="income" name={t('income')} fill="#0f766e" radius={[5,5,0,0]}/><Bar dataKey="expense" name={t('expense')} fill="#ef4444" radius={[5,5,0,0]}/></BarChart></ResponsiveContainer></div></section><section className="panel"><div className="panel-head"><h3>{t('categoryReport')}</h3></div><div className="donut"><ResponsiveContainer width="100%" height="100%"><PieChart><Pie data={expenseByCategory} dataKey="value" innerRadius={55} outerRadius={82}>{expenseByCategory.map((x,i)=><Cell key={i} fill={x.color}/>)}</Pie><Tooltip formatter={(v)=>money(v,preferences.currency)}/></PieChart></ResponsiveContainer></div></section></div></div>
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  CartesianGrid,
+  PieChart,
+  Pie,
+  Cell,
+} from "recharts";
+import { useApp } from "../context/AppContext";
+import { money, monthlyTotals, totals } from "../utils/finance";
+export default function Reports() {
+  const { transactions, categoryById, preferences, t } = useApp();
+  const chart = monthlyTotals(transactions);
+  const expenseByCategory = Object.entries(
+    transactions
+      .filter((t) => t.type === "expense")
+      .reduce((a, t) => {
+        const c = categoryById[t.categoryId]?.name || "Other";
+        a[c] = (a[c] || 0) + Number(t.amount);
+        return a;
+      }, {}),
+  ).map(([name, value], i) => ({
+    name,
+    value,
+    color: ["#0f766e", "#14b8a6", "#f59e0b", "#3b82f6", "#8b5cf6", "#ef4444"][
+      i % 6
+    ],
+  }));
+  const sum = totals(transactions);
+  return (
+    <div>
+      <div className="page-heading">
+        <div>
+          <p>{t("financialInsights")}</p>
+          <h1>{t("reports")}</h1>
+        </div>
+      </div>
+      <div className="summary-grid small">
+        <div className="summary-card">
+          <div className="summary-icon income">
+            <span>＋</span>
+          </div>
+          <div>
+            <p>{t("netCashFlow")}</p>
+            <h2>{money(sum.income - sum.expense, preferences.currency)}</h2>
+          </div>
+        </div>
+        <div className="summary-card">
+          <div className="summary-icon expense">
+            <span>−</span>
+          </div>
+          <div>
+            <p>{t("expenseRatio")}</p>
+            <h2>
+              {sum.income ? Math.round((sum.expense / sum.income) * 100) : 0}%
+            </h2>
+          </div>
+        </div>
+      </div>
+      <div className="charts-grid">
+        <section className="panel wide">
+          <div className="panel-head">
+            <div>
+              <p>{t("trend")}</p>
+              <h3>{t("monthlyComparison")}</h3>
+            </div>
+          </div>
+          <div className="chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chart}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} />
+                <XAxis dataKey="month" axisLine={false} tickLine={false} />
+                <YAxis axisLine={false} tickLine={false} />
+                <Tooltip formatter={(v) => money(v, preferences.currency)} />
+                <Bar
+                  dataKey="income"
+                  name={t("income")}
+                  fill="#0f766e"
+                  radius={[5, 5, 0, 0]}
+                />
+                <Bar
+                  dataKey="expense"
+                  name={t("expense")}
+                  fill="#ef4444"
+                  radius={[5, 5, 0, 0]}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+        <section className="panel">
+          <div className="panel-head">
+            <h3>{t("categoryReport")}</h3>
+          </div>
+          <div className="donut">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={expenseByCategory}
+                  dataKey="value"
+                  innerRadius={55}
+                  outerRadius={82}
+                >
+                  {expenseByCategory.map((x, i) => (
+                    <Cell key={i} fill={x.color} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(v) => money(v, preferences.currency)} />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
 }
