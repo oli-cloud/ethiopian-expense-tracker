@@ -1,0 +1,5 @@
+export const money=(amount,currency='ETB')=>new Intl.NumberFormat('en-US',{style:'currency',currency,currencyDisplay:'narrowSymbol',minimumFractionDigits:2}).format(Number(amount)||0).replace(/^(.*?)(\d)/,'$1$2')
+export const totals=(transactions)=>transactions.reduce((a,t)=>{a[t.type]=(a[t.type]||0)+Number(t.amount);return a},{income:0,expense:0})
+export const monthlyTotals=(transactions)=>{const map={};transactions.forEach(t=>{const month=t.date?.slice(0,7)||'Unknown';map[month]??={month,income:0,expense:0};map[month][t.type]+=Number(t.amount)});return Object.values(map).sort((a,b)=>a.month.localeCompare(b.month))}
+export const startOfMonth=(value=new Date())=>{const d=new Date(value);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`}
+export const validateTransaction=(t)=>{if(!t.title?.trim())return'Title is required';if(!Number.isFinite(Number(t.amount))||Number(t.amount)<=0)return'Enter a valid amount greater than zero';if(!t.date)return'Date is required';return null}

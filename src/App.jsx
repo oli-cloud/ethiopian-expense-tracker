@@ -1,0 +1,11 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+import Layout from './components/layout/Layout'
+import Dashboard from './pages/Dashboard'
+import Transactions from './pages/Transactions'
+import TransactionForm from './pages/TransactionForm'
+import Categories from './pages/Categories'
+import Budgets from './pages/Budgets'
+import Reports from './pages/Reports'
+import Settings from './pages/Settings'
+import About from './pages/About'
+export default function App(){return <Routes><Route element={<Layout/>}><Route index element={<Navigate to="/dashboard" replace/>}/><Route path="dashboard" element={<Dashboard/>}/><Route path="transactions" element={<Transactions/>}/><Route path="transactions/new" element={<TransactionForm/>}/><Route path="transactions/:id/edit" element={<TransactionForm/>}/><Route path="categories" element={<Categories/>}/><Route path="budgets" element={<Budgets/>}/><Route path="reports" element={<Reports/>}/><Route path="settings" element={<Settings/>}/><Route path="about" element={<About/>}/></Route></Routes>}
