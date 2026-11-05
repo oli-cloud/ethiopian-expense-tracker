@@ -14,7 +14,6 @@ ethiopian-expense-tracker/
 │   ├── cmd/server/
 │   ├── internal/
 │   └── go.mod
-├── note.md             # Original project brief
 └── package.json        # Workspace convenience commands
 ```
 
