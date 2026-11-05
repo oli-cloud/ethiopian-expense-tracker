@@ -1,22 +1,13 @@
 {
-  "name": "ethiopian-expense-tracker",
+  "name": "birrwise",
   "private": true,
-  "version": "0.1.0",
-  "type": "module",
+  "version": "1.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "@tailwindcss/vite": "^4.3.4",
-    "@vitejs/plugin-react": "latest",
-    "lucide-react": "latest",
-    "react": "latest",
-    "react-dom": "latest",
-    "react-router-dom": "latest",
-    "recharts": "latest",
-    "tailwindcss": "^4.3.4",
-    "vite": "latest"
+    "frontend:install": "npm install --prefix frontend",
+    "frontend:dev": "npm run dev --prefix frontend",
+    "frontend:build": "npm run build --prefix frontend",
+    "backend:dev": "cd backend && PORT=8080 DATABASE_PATH=birrwise.db GIN_MODE=debug go run ./cmd/server",
+    "backend:build": "cd backend && go build ./cmd/server",
+    "dev": "npm run frontend:dev"
   }
 }
