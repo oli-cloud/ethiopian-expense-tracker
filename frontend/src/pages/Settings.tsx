@@ -21,7 +21,7 @@ export default function Settings() {
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const data = JSON.parse(reader.result);
+        const data = JSON.parse(typeof reader.result === "string" ? reader.result : "{}");
         storageService.save(data);
         location.reload();
       } catch {

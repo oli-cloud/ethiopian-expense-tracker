@@ -4,7 +4,7 @@ import { storageService } from '../services/storage'
 import { apiService } from '../services/api'
 import dictionaries from '../locales'
 
-const AppContext=createContext(null)
+const AppContext=createContext<any>(null)
 const today=new Date()
 const iso=(days)=>{const d=new Date(today);d.setDate(d.getDate()+days);return d.toISOString().slice(0,10)}
 const seed={

@@ -21,13 +21,13 @@ export default function Layout() {
   const [open, setOpen] = useState(false);
   const nav = useNavigate();
   const links = [
-    ["/dashboard", "dashboard", LayoutDashboard],
-    ["/transactions", "transactions", ArrowLeftRight],
-    ["/categories", "categories", Tags],
-    ["/budgets", "budgets", WalletCards],
-    ["/reports", "reports", ChartNoAxesCombined],
-    ["/settings", "settings", Settings],
-    ["/about", "about", Info],
+    { path: "/dashboard", key: "dashboard", Icon: LayoutDashboard },
+    { path: "/transactions", key: "transactions", Icon: ArrowLeftRight },
+    { path: "/categories", key: "categories", Icon: Tags },
+    { path: "/budgets", key: "budgets", Icon: WalletCards },
+    { path: "/reports", key: "reports", Icon: ChartNoAxesCombined },
+    { path: "/settings", key: "settings", Icon: Settings },
+    { path: "/about", key: "about", Icon: Info },
   ];
   const toggleTheme = () =>
     setPreferences((p) => ({
@@ -55,7 +55,7 @@ export default function Layout() {
           </button>
         </div>
         <nav>
-          {links.map(([path, key, Icon]) => {
+          {links.map(({ path, key, Icon }) => {
             const active = window.location.pathname === path;
             return (
               <NavLink
@@ -107,7 +107,7 @@ export default function Layout() {
         <Plus size={24} />
       </button>
       <nav className="mobile-nav">
-        {links.slice(0, 5).map(([path, key, Icon]) => (
+        {links.slice(0, 5).map(({ path, key, Icon }) => (
           <NavLink
             key={path}
             to={path}

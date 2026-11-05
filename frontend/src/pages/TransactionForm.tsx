@@ -133,7 +133,7 @@ export default function TransactionForm() {
           <label className="full">
             {t("description")}
             <textarea
-              rows="4"
+              rows={4}
               value={form.description || ""}
               onChange={(e) => set("description", e.target.value)}
               placeholder={t("optionalNote")}
