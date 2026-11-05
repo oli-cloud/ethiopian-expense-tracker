@@ -56,3 +56,59 @@ func seedCategories(db *sql.DB) {
 		_, _ = db.Exec("INSERT OR IGNORE INTO categories(id,name,type,color,icon,is_default) VALUES(?,?,?,?,?,1)", r.id, r.name, r.kind, r.color, r.icon)
 	}
 }
+
+func seedData(db *sql.DB) error {
+	now := time.Now()
+	timestamp := now.UTC().Format(time.RFC3339)
+	currentMonth := now.Format("2006-01")
+	date := func(daysAgo int) string {
+		return now.AddDate(0, 0, -daysAgo).Format("2006-01-02")
+	}
+
+	transactions := []struct {
+		id, title, kind, category, paymentMethod, description, date string
+		amount                                                      float64
+	}{
+		{"seed-monthly-salary", "Monthly salary", "income", "salary", "Bank transfer", "November salary payment", date(2), 28000},
+		{"seed-freelance-project", "Website design project", "income", "freelance", "CBE Birr", "Freelance client payment", date(8), 6500},
+		{"seed-business-sales", "Weekend market sales", "income", "business", "Telebirr", "Small business revenue", date(12), 3200},
+		{"seed-rent", "Apartment rent", "expense", "housing", "Bank transfer", "Monthly apartment rent", date(18), 8500},
+		{"seed-groceries", "Mercato groceries", "expense", "food", "Telebirr", "Vegetables, grains, and household food", date(3), 1850},
+		{"seed-taxi", "Taxi fares", "expense", "transport", "Cash", "Daily transport for the week", date(5), 720},
+		{"seed-electricity", "Electricity and water", "expense", "utilities", "CBE Birr", "Monthly utility payment", date(9), 980},
+		{"seed-internet", "Internet and airtime", "expense", "internet", "Telebirr", "Home internet and mobile airtime", date(7), 1250},
+		{"seed-family", "Family support", "expense", "family", "Cash", "Support for family expenses", date(14), 1500},
+		{"seed-entertainment", "Cinema and coffee", "expense", "entertainment", "Telebirr", "Weekend leisure", date(6), 650},
+	}
+
+	for _, transaction := range transactions {
+		_, err := db.Exec(`INSERT OR IGNORE INTO transactions
+			(id,title,amount,type,category_id,date,payment_method,description,created_at,updated_at)
+			VALUES(?,?,?,?,?,?,?,?,?,?)`,
+			transaction.id, transaction.title, transaction.amount, transaction.kind,
+			transaction.category, transaction.date, transaction.paymentMethod,
+			transaction.description, timestamp, timestamp)
+		if err != nil {
+			return err
+		}
+	}
+
+	budgets := []struct {
+		id, category string
+		amount       float64
+	}{
+		{"budget-food-current", "food", 3500},
+		{"budget-transport-current", "transport", 2200},
+		{"budget-housing-current", "housing", 9000},
+		{"budget-internet-current", "internet", 1800},
+		{"budget-entertainment-current", "entertainment", 1500},
+	}
+
+	for _, budget := range budgets {
+		if _, err := db.Exec("INSERT OR IGNORE INTO budgets(id,category_id,month,limit_amount) VALUES(?,?,?,?)", budget.id+"-"+currentMonth, budget.category, currentMonth, budget.amount); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

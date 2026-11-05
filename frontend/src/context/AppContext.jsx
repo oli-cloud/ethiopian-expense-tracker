@@ -26,6 +26,7 @@ export function AppProvider({children}){
   const [preferences,setPreferences]=useState(initial.preferences||seed.preferences)
   useEffect(()=>{storageService.save({transactions,categories,budgets,preferences})},[transactions,categories,budgets,preferences])
   useEffect(()=>{document.documentElement.classList.toggle('dark',preferences.theme==='dark')},[preferences.theme])
+  useEffect(()=>{document.documentElement.lang=preferences.language;document.documentElement.dir='ltr'},[preferences.language])
   useEffect(()=>{
     Promise.all([apiService.listTransactions(),apiService.listCategories(),apiService.listBudgets(),apiService.getPreferences()])
       .then(([apiTransactions,apiCategories,apiBudgets,apiPreferences])=>{
@@ -38,7 +39,8 @@ export function AppProvider({children}){
   },[])
   useEffect(()=>{apiService.updatePreferences(preferences).catch(()=>{})},[preferences])
   const t=(key)=>dictionaries[preferences.language]?.[key]||dictionaries.en[key]||key
-  const categoryById=useMemo(()=>Object.fromEntries(categories.map(c=>[c.id,c])),[categories])
+  const categoryKeys={food:'food',transport:'transport',housing:'housing',utilities:'utilities',internet:'internet',health:'health',education:'education',clothing:'clothing',entertainment:'entertainment',family:'family','other-expense':'otherExpense',salary:'salary',business:'business',freelance:'freelance','other-income':'otherIncome'}
+  const categoryById=useMemo(()=>Object.fromEntries(categories.map(c=>[c.id,{...c,name:preferences.language==='am'?(dictionaries.am[categoryKeys[c.id]]||c.name):c.name}])),[categories,preferences.language])
   const addTransaction=async(item)=>{try{const created=await apiService.createTransaction(item);setTransactions(v=>[created,...v])}catch{setTransactions(v=>[{...item,id:crypto.randomUUID(),createdAt:new Date().toISOString()},...v])}}
   const updateTransaction=async(id,item)=>{try{const updated=await apiService.updateTransaction(id,item);setTransactions(v=>v.map(t=>t.id===id?updated:t))}catch{setTransactions(v=>v.map(t=>t.id===id?{...t,...item,updatedAt:new Date().toISOString()}:t))}}
   const deleteTransaction=async(id)=>{try{await apiService.deleteTransaction(id)}catch{};setTransactions(v=>v.filter(t=>t.id!==id))}
